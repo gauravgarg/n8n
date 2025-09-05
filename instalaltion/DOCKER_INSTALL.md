@@ -23,15 +23,29 @@ This section describes how to install n8n on a VM using your own Dockerfile and 
 3. **Copy your project files to the VM**
    - Ensure your `Dockerfile` and `docker-compose.yml` are present in the desired directory.
 
-4. **Build and Start n8n using Docker Compose**
+
+4. **Environment Configuration**
+   - Create a `.env` file in your project directory with the following content:
+     ```env
+     N8N_HOST=<your-domain-or-public-ip>
+     ```
+   - This sets the host value for n8n. You can add other environment variables as needed.
+
+5. **Build and Start n8n using Docker Compose**
    ```bash
    cd /path/to/your/project
    sudo docker-compose up -d --build
    ```
    - This will build the image from your Dockerfile and start n8n in the background.
 
-5. **Access n8n**
-   - Open `http://<VM-Public-IP>:5678` in your browser.
+6. **Stop n8n**
+   ```bash
+   sudo docker-compose down
+   ```
+   - This will stop and remove the containers.
+
+7. **Access n8n**
+   - Open `http://<N8N_HOST>:5678` in your browser.
 
 ## Notes
 - For persistent data, configure volumes in your `docker-compose.yml`.
