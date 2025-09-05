@@ -34,13 +34,13 @@ This section describes how to install n8n on a VM using your own Dockerfile and 
 5. **Build and Start n8n using Docker Compose**
    ```bash
    cd /path/to/your/project
-   sudo docker-compose up -d --build
+   sudo docker compose up -d --build
    ```
    - This will build the image from your Dockerfile and start n8n in the background.
 
 6. **Stop n8n**
    ```bash
-   sudo docker-compose down
+   sudo docker compose down
    ```
    - This will stop and remove the containers.
 
