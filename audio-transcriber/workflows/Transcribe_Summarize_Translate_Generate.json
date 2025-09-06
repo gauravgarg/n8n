@@ -1,0 +1,290 @@
+{
+  "name": "Transcribe Summarize Translate Generate",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "6bbd2d56-c590-4ddd-af49-b2c94e5505ef",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        560
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "FFpJwrHmOHpxLs0P",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5d3a697d-fcb7-41ee-91df-ea95d3e2886b",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        560
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "FFpJwrHmOHpxLs0P",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "={{ $json.text }}",
+        "options": {}
+      },
+      "id": "d70751ef-14e1-44bd-bb4e-859a9aeaa475",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.3,
+      "position": [
+        1968,
+        336
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "FFpJwrHmOHpxLs0P",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2db5419b-aca2-41a1-a728-553861cb7fb6",
+      "name": "Summarization Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.response.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "HumanMessagePromptTemplate",
+              "message": "Translate to Japanese"
+            }
+          ]
+        }
+      },
+      "id": "8cd18a7a-0723-4438-ad05-20bdaa921123",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        1504,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "https://drive.google.com/file/d/1lYjAowjkmOoqjX-YEibaA_kga0gfYu-g/view?usp=drive_link",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "id": "0d0ba854-0c85-44ba-b7a2-38a73bb2ec11",
+      "name": "Google Drive2",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        624,
+        336
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "D9gEVhqdDhGTEKdk",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Google Drive2').item.binary.data.fileName.split('.').slice(0, -1).join('.') }}_jp.mp3",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ITTPfxhTiM1mapwIO7wmPb9pePlI0imn",
+          "mode": "list",
+          "cachedResultName": "ai-experiments",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ITTPfxhTiM1mapwIO7wmPb9pePlI0imn"
+        },
+        "options": {}
+      },
+      "id": "1deabb80-d0df-4a15-96e8-15214aba22e8",
+      "name": "Google Drive3",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2288,
+        336
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "D9gEVhqdDhGTEKdk",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "325d986d-10d2-4f04-949d-d396c0f5ee46",
+      "name": "OpenAI2",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.3,
+      "position": [
+        864,
+        336
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "FFpJwrHmOHpxLs0P",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        416,
+        336
+      ],
+      "id": "f926cc5a-a09e-4852-9d01-4b23cb2d95a6",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization Chain": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "OpenAI2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI2": {
+      "main": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8cfd7d8f-c9b1-4a92-9944-a2e61e3c40d9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ae223e8ba678a648604fc09c0fa040faa09a81cdabd82e2b9bec82338f001358"
+  },
+  "id": "1VqWMQQdckodrApP",
+  "tags": []
+}

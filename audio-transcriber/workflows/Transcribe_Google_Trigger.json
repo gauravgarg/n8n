@@ -1,0 +1,207 @@
+{
+  "name": "Transcribe Google Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1ITTPfxhTiM1mapwIO7wmPb9pePlI0imn",
+          "mode": "list",
+          "cachedResultName": "ai-experiments",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ITTPfxhTiM1mapwIO7wmPb9pePlI0imn"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "a4def9e6-479d-42dc-a091-56538d643e42",
+      "name": "Google Drive Trigger",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        208
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "D9gEVhqdDhGTEKdk",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "dc2885a1-b619-474c-80cc-3890eae5384b",
+      "name": "Google Drive2",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "D9gEVhqdDhGTEKdk",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "text",
+        "options": {
+          "fileName": "={{ $('Google Drive2').item.binary.data.fileName.split('.').slice(0, -1).join('.') }}.txt"
+        }
+      },
+      "id": "b464679b-5d78-4cdb-a0cb-2ec64484b962",
+      "name": "Convert to File1",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "name": "=",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ITTPfxhTiM1mapwIO7wmPb9pePlI0imn",
+          "mode": "list",
+          "cachedResultName": "ai-experiments",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ITTPfxhTiM1mapwIO7wmPb9pePlI0imn"
+        },
+        "options": {}
+      },
+      "id": "edfb8fc2-f733-4689-adb9-b3cd142d40f3",
+      "name": "Google Drive3",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        848,
+        0
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "D9gEVhqdDhGTEKdk",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "0f917298-1811-48cc-9bf4-a8b0f0744cba",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "FFpJwrHmOHpxLs0P",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Automatically detects new MP3 files uploaded to a Google Drive folder, transcribes them using OpenAI, and saves the text in another Google Drive folder.  ",
+        "height": 112,
+        "width": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        -144
+      ],
+      "id": "beb6767b-b874-48c7-a63b-44200630960d",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Drive2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive2": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Google Drive3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e2ef7dbb-a0c5-4334-933c-445d4afc3b78",
+  "meta": {
+    "instanceId": "ae223e8ba678a648604fc09c0fa040faa09a81cdabd82e2b9bec82338f001358"
+  },
+  "id": "A6HZD4ihIjHFXP8K",
+  "tags": []
+}
