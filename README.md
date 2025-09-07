@@ -10,12 +10,19 @@ n8n is an extendable workflow automation tool. This repository contains installa
 
 
 
+
 ## 📂 Workflows
-- [Chat With Wikipedia](wikipedia-chat/docs/chat-with-wikipedia.md)
+- **Chat With Wikipedia**
+	- [Chat With Wikipedia](wikipedia-chat/docs/chat-with-wikipedia.md)
+
 - **AI Audio Transcriber**
 	- [Transcribe Google Trigger](audio-transcriber/docs/transcribe-google-trigger.md)
 	- [Transcribe Output to Google Drive](audio-transcriber/docs/transcribe-output-to-google-drive.md)
 	- [Transcribe Summarize Translate Generate](audio-transcriber/docs/transcribe-summarize-translate-generate.md)
+
+- **Chat With Documents**
+	- [Chat With Docs Query](document-chat/docs/chat-with-docs-query.md)
+	- [Chat With Docs Upsert](document-chat/docs/chat-with-docs-upsert.md)
 
 
 ---
