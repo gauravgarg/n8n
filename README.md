@@ -9,8 +9,6 @@ n8n is an extendable workflow automation tool. This repository contains installa
 
 
 
-
-
 ## 📂 Workflows
 - **Chat With Wikipedia**
 	- [Chat With Wikipedia](wikipedia-chat/docs/chat-with-wikipedia.md)
@@ -23,6 +21,9 @@ n8n is an extendable workflow automation tool. This repository contains installa
 - **Chat With Documents**
 	- [Chat With Docs Query](document-chat/docs/chat-with-docs-query.md)
 	- [Chat With Docs Upsert](document-chat/docs/chat-with-docs-upsert.md)
+
+- **Contact Form Automation**
+    - [Contact Form Automation](contact-form-automation/docs/contact-form-automation.md)
 
 
 ---
