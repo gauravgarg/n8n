@@ -1,4 +1,3 @@
-
 # n8n Project Overview
 
 n8n is an extendable workflow automation tool. This repository contains installation guides and workflow documentation.
