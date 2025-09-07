@@ -1,0 +1,479 @@
+{
+  "name": "contact-form-automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "incoming",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "2cd13cab-674d-4193-ad5c-792bfff169fb",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        256
+      ],
+      "webhookId": "f0926930-8352-474c-a8c3-f9fb19026aac"
+    },
+    {
+      "parameters": {
+        "functionCode": "return items.map(item => { return { json: item.json }; });"
+      },
+      "id": "e91e720f-0d38-46c0-afec-4005cb6fea24",
+      "name": "Normalize Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://ipapi.co/?q=",
+        "options": {}
+      },
+      "id": "ef4ccff8-4669-4477-ae93-b911102de346",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.region }}",
+              "value2": "EU"
+            }
+          ]
+        }
+      },
+      "id": "71975b5f-5761-4910-a255-2fd6ece21469",
+      "name": "If EU Contact?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "7844458503",
+        "text": "=New contact registered \nName: {{ $json.body.name }}\nPhone: {{ $json.body.phone }}\nEmail: {{ $json.body.email }}\nMessage:  {{ $json.body.message }}",
+        "additionalFields": {}
+      },
+      "id": "58d4641e-78c6-4f11-8618-1f66b58827ed",
+      "name": "Send Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -112
+      ],
+      "webhookId": "a229bf96-93d6-46c0-afe7-50573ed2e867",
+      "credentials": {
+        "telegramApi": {
+          "id": "GJGfdsMMCyMzZBnx",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"message\" : \"form received and processed successfully\",\n \"name\" : \"{{ $('Normalize Data').item.json.body.name }}\",\n\"email\" : \"{{ $('Normalize Data').item.json.body.email }}\",\n\"timestamp\": \"{{ $now}}\"\n}",
+        "options": {}
+      },
+      "id": "a2577a6d-9b5b-404f-aa1c-7cac3b7b0745",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        480,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1RF0Ofel2PWm8RRZ1VDPZ8uIJwl7PbSgF4CanvljGQ4I",
+          "mode": "list",
+          "cachedResultName": "contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RF0Ofel2PWm8RRZ1VDPZ8uIJwl7PbSgF4CanvljGQ4I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1RF0Ofel2PWm8RRZ1VDPZ8uIJwl7PbSgF4CanvljGQ4I/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "full name": "={{ $json.body.name }}",
+            "email": "={{ $json.body.email }}",
+            "phone": "={{ $json.body.phone }}",
+            "message": "={{ $json.body.message }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "full name",
+              "displayName": "full name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -560,
+        560
+      ],
+      "id": "c1b839a8-9e36-42ce-8515-29017bd95d7e",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "llg9IHNxiLdQnMRq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -352,
+        560
+      ],
+      "id": "b567e056-fce1-4d17-91c4-5167484b7b83",
+      "name": "Wait",
+      "webhookId": "13fe238a-c1d4-4c17-affd-f4c4f54fbbb8"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Welcome!",
+        "message": "=<!DOCTYPE html> <html>   <head>     <meta charset=\"UTF-8\" />     <title>New Contact Form Submission</title>     <style>       body {         font-family: Arial, sans-serif;         color: #333;         background-color: #f9f9f9;         padding: 20px;       }       .container {         background: #ffffff;         padding: 20px;         border-radius: 8px;         box-shadow: 0px 2px 6px rgba(0,0,0,0.1);         max-width: 600px;         margin: auto;       }       h2 {         color: #2c3e50;       }       p {         margin: 8px 0;       }       .label {         font-weight: bold;       }       .footer {         margin-top: 20px;         font-size: 12px;         color: #777;       }     </style>   </head>   <body>     <div class=\"container\">       <h2>📩 New Contact Submission</h2>       <p><span class=\"label\">Name:</span> {{$json['full name']}}</p>       <p><span class=\"label\">Phone:</span> {{$json.phone}}</p>       <p><span class=\"label\">Message:</span></p>       <p>{{$json.message}}</p>      </div>   </body> </html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        560
+      ],
+      "id": "a7d593c4-9917-440a-ae43-335852a87f13",
+      "name": "Send a message",
+      "webhookId": "635938fb-2c68-4ae6-b929-04ef535d4015",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6S933iVN500qpNNJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "resource": "contact",
+        "email": "={{ $json.body.email }}",
+        "additionalFields": {
+          "customPropertiesUi": {
+            "customPropertiesValues": [
+              {
+                "property": "europe",
+                "value": "true"
+              }
+            ]
+          },
+          "firstName": "={{ $json.body.name }}",
+          "phoneNumber": "={{ $json.body.phone }}"
+        }
+      },
+      "id": "da724d92-d033-4434-b805-98b0e256de96",
+      "name": "Register EU Contact",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        128
+      ],
+      "credentials": {
+        "hubspotAppToken": {
+          "id": "znmxAPi1XqYqtZ6r",
+          "name": "HubSpot App Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "resource": "contact",
+        "email": "={{ $json.body.email }}",
+        "additionalFields": {
+          "customPropertiesUi": {
+            "customPropertiesValues": [
+              {
+                "property": "europe",
+                "value": "false"
+              }
+            ]
+          },
+          "firstName": "={{ $json.body.name }}",
+          "phoneNumber": "={{ $json.body.phone }}"
+        }
+      },
+      "id": "915e7796-40f6-469a-a58f-dde0c29b9e9d",
+      "name": "Register not EU Contact",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        352
+      ],
+      "credentials": {
+        "hubspotAppToken": {
+          "id": "znmxAPi1XqYqtZ6r",
+          "name": "HubSpot App Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "task": "SzhXLXAtVXFKR2liWUdBWA",
+        "title": "=follows-up  {{ $json.properties.firstname.value }}",
+        "additionalFields": {
+          "dueDate": "={{ new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString() }}",
+          "notes": "=Phone:  {{ $('Normalize Data').item.json.body.name }}\nEmail: {{ $('Normalize Data').item.json.body.email }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleTasks",
+      "typeVersion": 1,
+      "position": [
+        112,
+        224
+      ],
+      "id": "a43c5a35-51e3-4cd3-a720-dff83ef58d32",
+      "name": "Create a task",
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "Z9hATde6g0WHx0mZ",
+          "name": "Google Tasks account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If EU Contact?": {
+      "main": [
+        [
+          {
+            "node": "Register EU Contact",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Register not EU Contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If EU Contact?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Data": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Telegram": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Register EU Contact": {
+      "main": [
+        [
+          {
+            "node": "Create a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Register not EU Contact": {
+      "main": [
+        [
+          {
+            "node": "Create a task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a task": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6f2cfae0-6f97-49d8-a291-7ffbb10ff3a2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ae223e8ba678a648604fc09c0fa040faa09a81cdabd82e2b9bec82338f001358"
+  },
+  "id": "8jO8q6yMp9zSwWYJ",
+  "tags": []
+}
