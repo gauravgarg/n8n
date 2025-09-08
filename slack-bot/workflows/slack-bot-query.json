@@ -1,0 +1,254 @@
+{
+  "name": "slack-bot-query",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "53bcbbc2-eb72-4f8d-8edb-8f7c144ed30a",
+      "name": "Chat OpenAI",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1328,
+        -64
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "FFpJwrHmOHpxLs0P",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "2a8f9532-6a5f-4d62-b8e3-c9c2c954f7df",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        1440,
+        304
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "FFpJwrHmOHpxLs0P",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "bb153931-05c6-45aa-a2e1-93f54f574f77",
+      "name": "On new manual Chat Message",
+      "type": "@n8n/n8n-nodes-langchain.manualChatTrigger",
+      "position": [
+        1040,
+        -304
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Embed the incoming chat message and use it retrieve relevant chunks from the vector store. These are passed to LM to formulate an answer ",
+        "height": 224.80862533692715,
+        "width": 654.1028019808174
+      },
+      "id": "0b025e00-9bc0-462c-86bc-2ceeee508c53",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1008,
+        -352
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.body.text }} ",
+        "options": {}
+      },
+      "id": "5f0ec0f2-ca2f-4eab-a603-38bbce9db54c",
+      "name": "Retrieval QA Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainRetrievalQa",
+      "position": [
+        1312,
+        -304
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "topK": 5
+      },
+      "id": "820fffe4-b233-4a69-94e3-f8b8e84ccd0e",
+      "name": "Vector Store Retriever",
+      "type": "@n8n/n8n-nodes-langchain.retrieverVectorStore",
+      "position": [
+        1504,
+        -64
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a3d254c9-16ca-4718-8585-ad791b172f2d",
+        "options": {
+          "noResponseBody": true
+        }
+      },
+      "id": "0a8cdde7-ceae-4b4d-ae97-78af6fa965dd",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        1072,
+        -64
+      ],
+      "webhookId": "a3d254c9-16ca-4718-8585-ad791b172f2d"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Webhook').item.json.body.response_url }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{ $json.response.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8ad19a52-cdad-4029-b084-57251cebdb33",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1712,
+        -304
+      ]
+    },
+    {
+      "parameters": {
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "nvda",
+          "mode": "list",
+          "cachedResultName": "nvda"
+        },
+        "options": {}
+      },
+      "id": "9639f562-281f-4ccb-9beb-c08bce8ea676",
+      "name": "Qdrant Vector Store1",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        128
+      ],
+      "credentials": {
+        "qdrantApi": {
+          "id": "JcSRlF7ZNhnymA69",
+          "name": "QdrantApi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat OpenAI": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retrieval QA Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Store Retriever": {
+      "ai_retriever": [
+        [
+          {
+            "node": "Retrieval QA Chain",
+            "type": "ai_retriever",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On new manual Chat Message": {
+      "main": [
+        [
+          {
+            "node": "Retrieval QA Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieval QA Chain": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Retrieval QA Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store1": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Vector Store Retriever",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "71e0b29b-d99b-4451-bcb4-55d14a383a06",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ae223e8ba678a648604fc09c0fa040faa09a81cdabd82e2b9bec82338f001358"
+  },
+  "id": "ojrEe5lcXf6vdb10",
+  "tags": []
+}
