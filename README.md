@@ -24,6 +24,9 @@ n8n is an extendable workflow automation tool. This repository contains installa
 - **Contact Form Automation**
     - [Contact Form Automation](contact-form-automation/docs/contact-form-automation.md)
 
+- **Slack Bot**
+    - [Slack Bot Query](slack-bot/docs/slack-bot-query.md)
+    - [Slack Bot Upsert](slack-bot/docs/slack-bot-upsert.md)
 
 ---
 For questions or contributions, please contact the repository owner.
